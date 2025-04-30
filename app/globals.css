@@ -6,17 +6,17 @@
   --font-sans: "Urbanist", sans-serif;
 }
 
-@media (prefers-color-scheme: dark) {
+/* @media (prefers-color-scheme: dark) {
   :root {
     --background: #0a0a0a;
     --foreground: #ededed;
   }
-}
+} */
 
 body {
   margin: 0;
   height: 100v;
-  background: linear-gradient(-30deg, #8B322C, #C40C0C, #E36414, #B80000, #820300);
+  background: linear-gradient(-30deg, #064273, #76B6C4, #7FCDFF, #1DA2D8, #DEF3F6);
   background-size: 400% 400%;
   animation: bg 20s ease infinite;
   color: var(--foreground);

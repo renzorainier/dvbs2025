@@ -124,23 +124,15 @@ function Main() {
             }}>
             <div className="text-white text-center mb-4 relative z-10">
               <h1 className="font-bold text-8xl sm:text-8xl md:text-9xl lg:text-9xl">
-                <span className="bg-gradient-to-r from-yellow-400 via-yellow-500 to-orange-500 text-transparent bg-clip-text">
-                  Re
-                </span>
-                <span className="bg-gradient-to-r from-orange-500 via-red-500 to-orange-500 text-transparent bg-clip-text">
-                  scue
-                </span>
+              <span className="text-yellow-400 font-bold">
+  SeaQuest
+</span>
+
+
               </h1>
-              <h1 className="font-bold text-7xl sm:text-7xl md:text-8xl lg:text-9xl">
-                <span className="bg-gradient-to-r from-yellow-400 via-yellow-500 to-orange-500 text-transparent bg-clip-text">
-                  Z
-                </span>
-                <span className="bg-gradient-to-r from-orange-500 via-yellow-500 to-red-500 text-transparent bg-clip-text">
-                  one
-                </span>
-              </h1>
+
               <h3 className="text-3xl sm:text-4xl md:text-5xl font-bold">
-                D V B S &nbsp;2 0 2 4
+                D V B S &nbsp;2 0 2 5
               </h3>
             </div>
 
@@ -326,7 +318,7 @@ function Main() {
               </div>
             </div>
 
-            <BobbingImage />
+            {/* <BobbingImage /> */}
           </div>
         );
     }
