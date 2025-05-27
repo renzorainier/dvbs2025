@@ -211,7 +211,8 @@ function AdditionalPoints({ isVisitorView }) {
                       </Dialog.Title>
                       <div className="mt-2">
                         <p className="text-sm text-gray-500">
-                          Manually add points to students for the current day based on their classroom performance. Click on a
+                          Manually add points to students for the current day
+                          based on their classroom performance. Click on a
                           student name to enter the points.
                         </p>
                       </div>
@@ -298,7 +299,8 @@ function AdditionalPoints({ isVisitorView }) {
                 <button
                   className="flex-1 text-white font-bold py-2 px-4 rounded-lg bg-gray-400 hover:bg-gray-700"
                   onClick={() => handleClick(student)}>
-                  {student.name} - {student.id.charAt(0).toUpperCase()}{student.prefix}
+                  {student.name} - {student.id.charAt(0).toUpperCase()}
+                  {student.prefix}
                 </button>
 
                 <div

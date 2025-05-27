@@ -6,7 +6,7 @@
   "start_url": "/",
   "display": "standalone",
   "orientation": "portrait",
-  "icons": [
+   "icons": [
     {
       "src": "windows11/SmallTile.scale-100.png",
       "sizes": "71x71"

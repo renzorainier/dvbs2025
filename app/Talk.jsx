@@ -1,3 +1,4 @@
+"use client";
 import React, { useEffect, useRef, useState, useCallback } from "react";
 import {
   FaMicrophone,
@@ -111,7 +112,7 @@ const VoiceChatComponent = () => {
         setActiveRemoteUids((prevUids) => new Set(prevUids).add(user.uid));
       });
 
-    rtcClient.current.on("user-published", async (user, mediaType) => {
+      rtcClient.current.on("user-published", async (user, mediaType) => {
         console.log(
           `Remote user published: UID ${user.uid}, Media Type: ${mediaType}`
         );
@@ -348,30 +349,35 @@ const VoiceChatComponent = () => {
     <div
       ref={componentRef}
       className={`fixed z-50 rounded-xl shadow-2xl transition-all duration-500 ease-out
-                   w-30 h-auto
-                   bg-gray-800 border border-gray-700
-                   ${joined ? "bg-opacity-95" : "bg-opacity-90"}
-                   cursor-grab active:cursor-grabbing
-                   ${isRemoteUserSpeaking && micMuted ? "animate-pulse-mic-whole" : ""} `}
+                         w-30 h-auto
+                         cursor-grab active:cursor-grabbing
+                         ${isRemoteUserSpeaking && micMuted ? "animate-pulse-mic-whole" : ""} `}
       style={{
         left: position.x,
         top: position.y,
         transition: startAnimation ? "left 0.7s ease-out, top 0.3s ease-out" : "none",
+        backgroundColor: '#393E46', // Dark grey background
+        borderColor: '#EEEEEE', // Light border
+        borderWidth: '1px',
+        userSelect: 'none',
+        MozUserSelect: 'none',
+        WebkitUserSelect: 'none',
+        msUserSelect: 'none',
       }}
       onMouseDown={handleStart}
       onTouchStart={handleStart}
     >
       <div className="absolute inset-0 z-0"></div>
 
-      <div className="relative flex flex-col p-4 text-white z-10">
+      <div className="relative flex flex-col p-4 z-10" style={{ color: '#EEEEEE' }}>
         {joined ? (
           <div className="flex flex-col items-center justify-center space-y-2">
-            <div className="flex items-center text-gray-300 text-base font-semibold space-x-1">
-              <FaUsers className="w-4 h-4 text-blue-400" />
+            <div className="flex items-center text-base font-semibold space-x-1" style={{ color: '#EEEEEE' }}>
+              <FaUsers className="w-4 h-4" style={{ color: '#00ADB5' }} />
               <span>Users: {totalActiveUsers}</span>
             </div>
 
-            <p className="text-sm text-gray-300 text-center">Press to talk</p>
+            <p className="text-sm text-center" style={{ color: '#EEEEEE' }}>Press to talk</p>
 
             <button
               onMouseDown={startTalking}
@@ -380,24 +386,46 @@ const VoiceChatComponent = () => {
               onTouchEnd={stopTalking}
               className={`w-20 h-20 rounded-full flex items-center justify-center text-white text-base select-none transition-all duration-200 ease-in-out transform ${
                 micMuted
-                  ? "bg-gray-600 hover:bg-gray-500 shadow-lg shadow-gray-900/50"
-                  : "bg-green-600 hover:bg-green-700 shadow-xl shadow-green-900/50 animate-pulse-mic"
+                  ? ""
+                  : "animate-pulse-mic"
               } `}
+              style={{
+                backgroundColor: micMuted ? '#393E46' : '#00ADB5', // Dark background for muted, accent blue for unmuted
+                boxShadow: micMuted
+                  ? '0 10px 15px -3px rgba(0, 0, 0, 0.5), 0 4px 6px -2px rgba(0, 0, 0, 0.05)'
+                  : '0 20px 25px -5px rgba(0, 173, 181, 0.5), 0 8px 10px -6px rgba(0, 173, 181, 0.05)',
+                color: '#EEEEEE', // White icon color
+                '--tw-bg-opacity': '1',
+                ...(micMuted
+                  ? {
+                      '&:hover': {
+                        backgroundColor: '#00ADB5', // Hover lightens to accent blue
+                        boxShadow: '0 10px 15px -3px rgba(0, 173, 181, 0.5), 0 4px 6px -2px rgba(0, 173, 181, 0.05)',
+                      }
+                    }
+                  : {
+                      '&:hover': {
+                        backgroundColor: '#7FD9DF', // Hover lightens active blue
+                        boxShadow: '0 20px 25px -5px rgba(127, 217, 223, 0.5), 0 8px 10px -6px rgba(127, 217, 223, 0.05)',
+                      }
+                    }
+                )
+              }}
               aria-pressed={!micMuted}
               aria-label={micMuted ? "Hold to talk" : "Release to Stop Talking"}
               title={micMuted ? "Hold to Talk" : "Release to Stop Talking"}
             >
               {micMuted ? (
-                <FaMicrophoneSlash className="w-12 h-12 text-gray-300 pointer-events-none select-none" />
+                <FaMicrophoneSlash className="w-12 h-12 pointer-events-none select-none" style={{ color: '#EEEEEE' }} />
               ) : (
-                <FaMicrophone className="w-12 h-12 text-white pointer-events-none select-none" />
+                <FaMicrophone className="w-12 h-12 pointer-events-none select-none" style={{ color: '#EEEEEE' }} />
               )}
             </button>
           </div>
         ) : (
           <div className="flex flex-col items-center justify-center p-4">
-            <FaWalkieTalkie className="w-12 h-12 text-gray-400 mb-2 animate-bounce" />
-            <p className="text-sm text-gray-400">Connecting voice chat...</p>
+            <FaWalkieTalkie className="w-12 h-12 mb-2 animate-bounce" style={{ color: '#00ADB5' }} />
+            <p className="text-sm" style={{ color: '#EEEEEE' }}>Connecting voice chat...</p>
           </div>
         )}
       </div>
@@ -409,25 +437,23 @@ const VoiceChatComponent = () => {
         @keyframes pulse-mic {
           0% {
             transform: scale(1);
-            box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.7);
+            box-shadow: 0 0 0 0 rgba(0, 173, 181, 0.7); /* Use accent blue for pulse */
           }
           70% {
             transform: scale(1.05);
-            box-shadow: 0 0 0 15px rgba(34, 197, 94, 0);
+            box-shadow: 0 0 0 15px rgba(0, 173, 181, 0); /* Use accent blue for pulse */
           }
           100% {
             transform: scale(1);
-            box-shadow: 0 0 0 0 rgba(34, 197, 94, 0);
+            box-shadow: 0 0 0 0 rgba(0, 173, 181, 0); /* Use accent blue for pulse */
           }
         }
         .animate-pulse-mic {
           animation: pulse-mic 1.5s infinite;
         }
 
-        /* Define a new animation for the whole component if you want a different visual */
-        /* For this request, we'll reuse the pulse-mic animation with a new class name */
         .animate-pulse-mic-whole {
-            animation: pulse-mic 1.5s infinite; /* Reusing the same animation */
+            animation: pulse-mic 1.5s infinite;
         }
 
         @keyframes bounce {

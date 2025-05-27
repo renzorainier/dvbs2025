@@ -21,8 +21,8 @@ import StudentPointsRanking from "./StudentPointsRanking";
 import DisplayControl from "./DisplayControl";
 import BobbingImage from "./Image";
 import Weather from "./Weather";
-import AdditionalPoints from  "./AdditionalPoints"
-import UpdateFieldNames from "./UpdateFieldNames"
+import AdditionalPoints from "./AdditionalPoints";
+import UpdateFieldNames from "./UpdateFieldNames";
 
 import { FaChevronDown } from "react-icons/fa";
 import { MdOutlineLocalGroceryStore } from "react-icons/md";
@@ -104,15 +104,15 @@ function Main() {
             <DisplayControl isVisitorView={isVisitorView} />
           </Password>
         );
-        case "AdditionalPoints":
-          return (
-            <Password
-              isVisitorView={isVisitorView}
-              setIsVisitorView={setIsVisitorView}
-              correctPassword="2222">
-              <AdditionalPoints isVisitorView={isVisitorView} />
-            </Password>
-          );
+      case "AdditionalPoints":
+        return (
+          <Password
+            isVisitorView={isVisitorView}
+            setIsVisitorView={setIsVisitorView}
+            correctPassword="2222">
+            <AdditionalPoints isVisitorView={isVisitorView} />
+          </Password>
+        );
 
       default:
         return (
@@ -124,11 +124,7 @@ function Main() {
             }}>
             <div className="text-white text-center mb-4 relative z-10">
               <h1 className="font-bold text-8xl sm:text-8xl md:text-9xl lg:text-9xl">
-              <span className="text-yellow-400 font-bold">
-  SeaQuest
-</span>
-
-
+                <span className="text-yellow-400 font-bold">SeaQuest</span>
               </h1>
 
               <h3 className="text-3xl sm:text-4xl md:text-5xl font-bold">
@@ -261,8 +257,6 @@ function Main() {
                       <span style={{ marginTop: "0.5em" }}>Out</span>
                     </div>
                   </button>
-
-
                 </div>
               </div>
               <div className="flex justify-center items-center">
@@ -299,19 +293,23 @@ function Main() {
                         </div>
                       </button>
                       <button
-                    className="focus:outline-none bg-white-500 backdrop-blur-lg  text-white font-semibold py-4 px-4 rounded-lg shadow-lg transition duration-300 transform hover:scale-105"
-                    onClick={() => handleButtonClick("AdditionalPoints")}
-                    style={{ animation: "slide-from-left 1s ease forwards" }}>
-                    <div
-                      style={{
-                        display: "flex",
-                        flexDirection: "column",
-                        alignItems: "center",
-                      }}>
-                      <IoIosAddCircle  style={{ fontSize: "3.5em" }} />{" "}
-                      <span style={{ marginTop: "0.5em" }}>Additional Points</span>
-                    </div>
-                  </button>
+                        className="focus:outline-none bg-white-500 backdrop-blur-lg  text-white font-semibold py-4 px-4 rounded-lg shadow-lg transition duration-300 transform hover:scale-105"
+                        onClick={() => handleButtonClick("AdditionalPoints")}
+                        style={{
+                          animation: "slide-from-left 1s ease forwards",
+                        }}>
+                        <div
+                          style={{
+                            display: "flex",
+                            flexDirection: "column",
+                            alignItems: "center",
+                          }}>
+                          <IoIosAddCircle style={{ fontSize: "3.5em" }} />{" "}
+                          <span style={{ marginTop: "0.5em" }}>
+                            Additional Points
+                          </span>
+                        </div>
+                      </button>
                     </div>
                   )}
                 </div>

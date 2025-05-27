@@ -23,9 +23,8 @@ export default function Home() {
         {/* Add more Open Graph meta tags as needed */}
       </Head>
 
-      <div>
-        <AppWrapper/>
-        {/* <Main /> */}
+       <div style={{ userSelect: 'none' }}>
+        <AppWrapper />
       </div>
     </>
   );

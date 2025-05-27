@@ -5,14 +5,13 @@ import { getFirestore } from "firebase/firestore";
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
-    apiKey: "AIzaSyBlN6qVKKC2rMiCoOa-5GZuK2RGr3hOk-s",
-    authDomain: "dvbs2-ca434.firebaseapp.com",
-    databaseURL: "https://dvbs2-ca434-default-rtdb.firebaseio.com",
-    projectId: "dvbs2-ca434",
-    storageBucket: "dvbs2-ca434.firebasestorage.app",
-    messagingSenderId: "198606446381",
-    appId: "1:198606446381:web:ef63f2174e0735004c3da4"
-    };
+  apiKey: "AIzaSyCqWJLDMee6M4SexWRSPtSOxqCza7pqZ2U",
+  authDomain: "dvbs2025-53fe4.firebaseapp.com",
+  projectId: "dvbs2025-53fe4",
+  storageBucket: "dvbs2025-53fe4.firebasestorage.app",
+  messagingSenderId: "947229774723",
+  appId: "1:947229774723:web:9ca40961e7a98bc4239cb6"
+};
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 export const db = getFirestore(app);
