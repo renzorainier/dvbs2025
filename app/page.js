@@ -1,5 +1,7 @@
 "use client";
-import Main from "./Main.jsx";
+// import Main from "./Main.jsx";
+import AppWrapper from "./AppWrapper.jsx";
+
 import Head from "next/head.js";
 import React from "react";
 
@@ -22,7 +24,8 @@ export default function Home() {
       </Head>
 
       <div>
-        <Main />
+        <AppWrapper/>
+        {/* <Main /> */}
       </div>
     </>
   );
