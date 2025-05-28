@@ -5,7 +5,7 @@ import {
   FaMicrophoneSlash,
   FaUsers,
   FaSpinner,
-  FaXmark, // Corrected from FaTimes to FaXmark for Font Awesome 6
+  FaXmark,
   FaPhone,
 } from "react-icons/fa6";
 
@@ -21,9 +21,10 @@ const VoiceChatComponent = () => {
   const [position, setPosition] = useState({ x: 0, y: 0 });
   const [startAnimation, setStartAnimation] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
-  const [showEndCallUI, setShowEndCallUI] = useState(false); // Controls visibility of the 'X' area
-  const [isOverEndCallArea, setIsOverEndCallArea] = useState(false); // Tracks if component is over 'X' area
-  const [callEnded, setCallEnded] = useState(false); // Tracks if the call was explicitly ended
+  const [showEndCallUI, setShowEndCallUI] = useState(false);
+  const [isOverEndCallArea, setIsOverEndCallArea] = useState(false);
+  const [callEnded, setCallEnded] = useState(false);
+  // Removed: showDarkOverlay state variable, as it's now derived directly from micMuted
 
   const offset = useRef({ x: 0, y: 0 });
   const componentRef = useRef(null);
@@ -76,8 +77,6 @@ const VoiceChatComponent = () => {
     setComponentPosition();
     window.addEventListener("resize", setComponentPosition);
 
-    // Reposition the component to the bottom right when `callEnded` changes to true,
-    // ensuring it's ready for a rejoin.
     if (callEnded) {
       setComponentPosition();
     }
@@ -85,7 +84,7 @@ const VoiceChatComponent = () => {
     return () => {
       window.removeEventListener("resize", setComponentPosition);
     };
-  }, [componentRef.current, joined, startAnimation, callEnded]); // `callEnded` added as dependency
+  }, [componentRef.current, joined, startAnimation, callEnded]);
 
   useEffect(() => {
     const loadAgoraRTC = async () => {
@@ -184,7 +183,9 @@ const VoiceChatComponent = () => {
       setJoined(true);
       setMicMuted(true);
       setIsRemoteUserSpeaking(false);
-      setCallEnded(false); // Reset callEnded to false on successful join
+      setCallEnded(false);
+      // Removed: setShowDarkOverlay(true) from here
+      // The overlay will now be controlled by micMuted
 
       const initialRemoteUids = rtcClient.current.remoteUsers.map(
         (user) => user.uid
@@ -196,16 +197,16 @@ const VoiceChatComponent = () => {
       setJoined(false);
       setActiveRemoteUids(new Set());
       setIsRemoteUserSpeaking(false);
-      setCallEnded(true); // Set callEnded to true if joining fails
+      setCallEnded(true);
+      // Removed: setShowDarkOverlay(false) from here
     }
   }, [loading]);
 
   useEffect(() => {
-    // Attempt to join if not already joined, AgoraRTC is loaded, not loading, AND call has not been explicitly ended
     if (!loading && !joined && AgoraRTC.current && !callEnded) {
       joinChannel();
     }
-  }, [loading, joined, joinChannel, callEnded]); // `callEnded` added as dependency
+  }, [loading, joined, joinChannel, callEnded]);
 
   const leaveChannel = useCallback(async () => {
     console.log("Leaving channel...");
@@ -224,24 +225,25 @@ const VoiceChatComponent = () => {
       setIsRemoteUserSpeaking(false);
       rtcClient.current = null;
       localAudioTrack.current = null;
-      setCallEnded(true); // Set callEnded to true after leaving the channel
+      setCallEnded(true);
+      // Removed: setShowDarkOverlay(false) from here
     }
   }, []);
 
   const startTalking = useCallback(async () => {
     if (localAudioTrack.current) {
       await localAudioTrack.current.setMuted(false);
-      setMicMuted(false);
+      setMicMuted(false); // This will now control the overlay
       console.log("Microphone unmuted (talking).");
       playPressSound();
-      setIsRemoteUserSpeaking(false); // Stop remote speaking animation if local user starts talking
+      setIsRemoteUserSpeaking(false);
     }
   }, [playPressSound]);
 
   const stopTalking = useCallback(async () => {
     if (localAudioTrack.current) {
       await localAudioTrack.current.setMuted(true);
-      setMicMuted(true);
+      setMicMuted(true); // This will now control the overlay
       console.log("Microphone muted (stopped talking).");
     }
   }, []);
@@ -253,7 +255,8 @@ const VoiceChatComponent = () => {
     }
 
     setIsDragging(true);
-    setShowEndCallUI(true); // Show the 'X' UI when dragging starts
+    setShowEndCallUI(true); // Still show the 'X' UI when dragging starts
+    // Removed: setShowDarkOverlay(true) from here
     dragStartTime.current = Date.now();
 
     const clientX = e.type.startsWith("touch")
@@ -290,14 +293,10 @@ const VoiceChatComponent = () => {
       };
       setPosition(newPosition);
 
-      // Define the top area where dropping ends the call.
-      // This corresponds to the center of the circular "X" icon.
       const endCallAreaCenterX = window.innerWidth / 2;
-      const endCallAreaCenterY = 60; // Based on the top: 20px and height: 80px circle (20 + 80/2 = 60)
-      const endCallAreaRadius = 40; // Half of the 80px diameter circle
+      const endCallAreaCenterY = 60;
+      const endCallAreaRadius = 40;
 
-      // Calculate distance from draggable component's center to the end call area's center
-      // Assuming the draggable component is also roughly square for simplicity in this check
       const draggableCenterX = newPosition.x + (componentRef.current?.offsetWidth || 0) / 2;
       const draggableCenterY = newPosition.y + (componentRef.current?.offsetHeight || 0) / 2;
 
@@ -306,10 +305,8 @@ const VoiceChatComponent = () => {
         Math.pow(draggableCenterY - endCallAreaCenterY, 2)
       );
 
-      // If the distance is less than the sum of the radius of the "X" circle and a buffer for the draggable component's size
-      const collisionThreshold = endCallAreaRadius + Math.min((componentRef.current?.offsetWidth || 0), (componentRef.current?.offsetHeight || 0)) / 3; // roughly 1/3 of component size
+      const collisionThreshold = endCallAreaRadius + Math.min((componentRef.current?.offsetWidth || 0), (componentRef.current?.offsetHeight || 0)) / 3;
       setIsOverEndCallArea(distance < collisionThreshold);
-
 
       if (e.cancelable) {
         e.preventDefault();
@@ -322,6 +319,7 @@ const VoiceChatComponent = () => {
     (e) => {
       setIsDragging(false);
       setShowEndCallUI(false); // Hide the 'X' UI when dragging ends
+      // Removed: setShowDarkOverlay logic from here, as it's now controlled by micMuted
 
       if (componentRef.current) {
         const componentRect = componentRef.current.getBoundingClientRect();
@@ -331,26 +329,22 @@ const VoiceChatComponent = () => {
         const currentX = position.x;
         const currentY = position.y;
 
-        // Check if the component was dropped in the end call area
-        if (isOverEndCallArea) { // Use the state from handleMove for final check
+        if (isOverEndCallArea) {
           console.log("Dropped in end call area. Ending call.");
-          leaveChannel(); // End the call
-          // Immediately reposition to the bottom-right after ending the call
+          leaveChannel();
           const targetX = screenWidth - componentWidth - 20;
           const targetY = window.innerHeight - componentRect.height - 20;
           setPosition({ x: targetX, y: targetY });
-          return; // Exit to prevent further repositioning logic
+          return;
         }
 
-        // Snap to left or right edge if not dropped in end call area
         let newX;
         if (currentX + componentWidth / 2 < screenWidth / 2) {
-          newX = 20; // Snap to left
+          newX = 20;
         } else {
-          newX = screenWidth - componentWidth - 20; // Snap to right
+          newX = screenWidth - componentWidth - 20;
         }
 
-        // Clamp Y position within screen bounds
         let newY = Math.max(
           20,
           Math.min(currentY, window.innerHeight - componentRect.height - 20)
@@ -374,7 +368,6 @@ const VoiceChatComponent = () => {
       window.removeEventListener("touchmove", handleMove);
       window.removeEventListener("touchend", handleEnd);
     }
-    // Cleanup function for event listeners
     return () => {
       window.removeEventListener("mousemove", handleMove);
       window.removeEventListener("mouseup", handleEnd);
@@ -385,30 +378,38 @@ const VoiceChatComponent = () => {
 
   const totalActiveUsers = activeRemoteUids.size + (joined ? 1 : 0);
 
-  // Define the accent color constants for consistency
-  const ACCENT_COLOR_HEX = '#7FCDFF'; // #7FCDFF -> RGB: 127, 205, 255
+  const ACCENT_COLOR_HEX = '#7FCDFF';
   const ACCENT_COLOR_RGB = '127, 205, 255';
-  const ACCENT_COLOR_HOVER_LIGHT = '#A0E0FF'; // A slightly lighter shade for hover, derived from 7FCDFF
+  const ACCENT_COLOR_HOVER_LIGHT = '#A0E0FF';
 
   return (
     <>
+      {/* Dark Overlay - Now controlled by !micMuted */}
+      {!micMuted && joined && ( // Only show if mic is NOT muted AND we are joined
+        <div
+          className="fixed inset-0 bg-black transition-opacity duration-300"
+          style={{ opacity: 0.6, zIndex: 45 }}
+        ></div>
+      )}
+
       {/* End Call UI (the circular 'X' at the top) */}
       {showEndCallUI && (
         <div
           className={`fixed top-5 left-1/2 -translate-x-1/2 w-20 h-20 rounded-full flex items-center justify-center transition-all duration-200 z-40 shadow-xl`}
           style={{
             backgroundColor: isOverEndCallArea
-              ? "rgba(255, 0, 0, 0.9)" // More opaque red when hovered
-              : "#5C636E", // Dark grey background similar to the component
+              ? "rgba(255, 0, 0, 0.9)"
+              : "#5C636E",
             color: "#EEEEEE",
-            border: `2px solid ${isOverEndCallArea ? '#FF0000' : '#EEEEEE'}`, // Red border when over, light border otherwise
+            border: `2px solid ${isOverEndCallArea ? '#FF0000' : '#EEEEEE'}`,
             opacity: isOverEndCallArea ? 1 : 0.8,
             boxShadow: isOverEndCallArea ? '0 0 20px rgba(255, 0, 0, 0.7)' : '0 5px 15px -3px rgba(0,0,0,0.4)',
+            zIndex: 51,
           }}
         >
           <FaXmark
             className={`w-12 h-12 transition-transform duration-200 ${
-              isOverEndCallArea ? "scale-125 text-white" : "" // Grow and turn white when over
+              isOverEndCallArea ? "scale-125 text-white" : ""
             }`}
           />
         </div>
@@ -425,15 +426,15 @@ const VoiceChatComponent = () => {
           left: position.x,
           top: position.y,
           transition: startAnimation ? "left 0.7s ease-out, top 0.3s ease-out" : "none",
-          backgroundColor: '#393E46', // Dark grey background
-          borderColor: '#EEEEEE', // Light border
+          backgroundColor: '#393E46',
+          borderColor: '#EEEEEE',
           borderWidth: '1px',
           userSelect: 'none',
           MozUserSelect: 'none',
           WebkitUserSelect: 'none',
           msUserSelect: 'none',
-          // Hide the main component if the call has ended and not currently dragging
           display: callEnded && !isDragging ? "none" : "block",
+          zIndex: 50,
         }}
         onMouseDown={handleStart}
         onTouchStart={handleStart}
@@ -488,7 +489,6 @@ const VoiceChatComponent = () => {
           </div>
         </div>
 
-        {/* Audio element for press sound */}
         <audio ref={pressSoundRef} src="/press.wav" preload="auto" />
       </div>
 

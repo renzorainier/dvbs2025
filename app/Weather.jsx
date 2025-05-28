@@ -10,7 +10,7 @@ const apiIds = [
 function Weather() {
   const defaultCity = "Antipolo";
   const [data, setData] = useState(null);
-  const [loading, setLoading] = useState(true);
+  // Removed the 'loading' state as it's no longer needed for rendering logic
 
   useEffect(() => {
     const fetchData = async () => {
@@ -25,13 +25,13 @@ function Weather() {
         }
       } catch (error) {
         console.log(error);
-      } finally {
-        setLoading(false);
+        // If there's an error, data will remain null, so nothing renders.
       }
+      // No 'finally' block needed to set loading to false since 'loading' state is removed.
     };
 
     fetchData();
-  }, [defaultCity]);
+  }, [defaultCity]); // defaultCity added as a dependency for completeness, though it's constant
 
   const fetchWeatherData = async (city, apiIds) => {
     for (const apiId of apiIds) {
@@ -54,37 +54,33 @@ function Weather() {
     return shuffled;
   };
 
+  // If data is null, the component simply won't render anything.
+  // It will only render once 'data' has successfully been set.
+  if (!data) {
+    return null;
+  }
+
   return (
     <div className="flex flex-col justify-center items-center">
-      {!loading ? (
-        data && (
-          <div className="w-full rounded-lg" style={{ maxWidth: "90%" }}>
-            <div className="bg-gradient-to-r text-white  text-transparent rounded-lg shadow-lg p-1 flex flex-row items-center justify-center space-x-4">
-              <h1 className="text-base font-bold text-center">{data.name}</h1>
-              <Image
-                src={`http://openweathermap.org/img/wn/${data.weather[0].icon}@2x.png`}
-                alt=""
-                width={40}
-                height={40}
-                className="w-10 h-10"
-              />
-              <div>|</div>
-              <h1 className="text-base font-bold text-center">
-                {data.weather[0].description}
-              </h1>
-              <h1 className="text-base font-bold text-center">
-                {data.main.temp.toFixed()} °C
-              </h1>
-            </div>
-          </div>
-        )
-      ) : (
-        <div className="w-full rounded-lg" style={{ maxWidth: "90%" }}>
-          <div className="bg-gradient-to-r text-white from-yellow-500 to-red-500 text-transparent rounded-lg shadow-lg p-1 flex flex-row items-center justify-center space-x-4">
-            <div className="flex justify-center items-center p-4">Loading...</div>
-          </div>
+      <div className="w-full rounded-lg" style={{ maxWidth: "90%" }}>
+        <div className="bg-gradient-to-r text-white text-transparent rounded-lg shadow-lg p-1 flex flex-row items-center justify-center space-x-4">
+          <h1 className="text-base font-bold text-center">{data.name}</h1>
+          <Image
+            src={`http://openweathermap.org/img/wn/${data.weather[0].icon}@2x.png`}
+            alt=""
+            width={40}
+            height={40}
+            className="w-10 h-10"
+          />
+          <div>|</div>
+          <h1 className="text-base font-bold text-center">
+            {data.weather[0].description}
+          </h1>
+          <h1 className="text-base font-bold text-center">
+            {data.main.temp.toFixed()} °C
+          </h1>
         </div>
-      )}
+      </div>
     </div>
   );
 }
