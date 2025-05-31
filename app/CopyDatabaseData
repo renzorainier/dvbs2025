@@ -1,0 +1,197 @@
+import React, { useState, useEffect } from 'react';
+import { initializeApp } from 'firebase/app';
+import { getAuth, signInAnonymously } from 'firebase/auth';
+import { getFirestore, collection, getDocs, doc, setDoc } from 'firebase/firestore';
+
+// Placeholder Firebase configurations.
+// In a real application, you would import these from separate files:
+// import { firebaseConfig3 } from './firebaseConfig3';
+// import { firebaseConfig4 } from './firebaseConfig4';
+const firebaseConfig3 = {
+  apiKey: "AIzaSyCGcUZWDk5fQLy-ESsnSrfUsC1FfsSl5jY",
+  authDomain: "sched-35c30.firebaseapp.com",
+  projectId: "sched-35c30",
+  storageBucket: "sched-35c30.appspot.com",
+  messagingSenderId: "190264231373",
+  appId: "1:190264231373:web:eb2b5f1bd7a3df51e7f084"
+};
+
+const firebaseConfig4 = {
+  apiKey: "YOUR_API_KEY_4", // Replace with your actual API Key for destination
+  authDomain: "YOUR_AUTH_DOMAIN_4",
+  projectId: "YOUR_PROJECT_ID_4",
+  storageBucket: "YOUR_STORAGE_BUCKET_4",
+  messagingSenderId: "YOUR_MESSAGING_SENDER_ID_4",
+  appId: "YOUR_APP_ID_4"
+};
+
+const CopyDatabaseData = () => {
+  // State variables for managing the component's UI and data
+  const [loading, setLoading] = useState(false);
+  const [message, setMessage] = useState('');
+  // Input for collections to copy, comma-separated
+  const [collectionsInput, setCollectionsInput] = useState('sched'); // Default to 'sched' collection
+  const [sourceDb, setSourceDb] = useState(null);
+  const [targetDb, setTargetDb] = useState(null);
+  const [isFirebaseReady, setIsFirebaseReady] = useState(false);
+
+  // useEffect hook to initialize Firebase apps and authenticate
+  useEffect(() => {
+    const initializeFirebase = async () => {
+      try {
+        // Initialize the source Firebase app
+        const sourceApp = initializeApp(firebaseConfig3, 'sourceApp');
+        const sourceAuth = getAuth(sourceApp);
+        const sourceFirestore = getFirestore(sourceApp);
+        await signInAnonymously(sourceAuth); // Sign in anonymously for source DB access
+        setSourceDb(sourceFirestore);
+
+        // Initialize the target Firebase app
+        const targetApp = initializeApp(firebaseConfig4, 'targetApp');
+        const targetAuth = getAuth(targetApp);
+        const targetFirestore = getFirestore(targetApp);
+        await signInAnonymously(targetAuth); // Sign in anonymously for target DB access
+        setTargetDb(targetFirestore);
+
+        setIsFirebaseReady(true); // Mark Firebase as ready
+        setMessage('Firebase initialized. Ready to copy data.');
+      } catch (error) {
+        console.error("Error initializing Firebase:", error);
+        setMessage(`Error initializing Firebase: ${error.message}`);
+      }
+    };
+
+    initializeFirebase();
+  }, []); // Empty dependency array ensures this runs only once on mount
+
+  /**
+   * Copies all documents from a specified collection in the source database
+   * to the same collection in the target database.
+   * @param {string} collectionName - The name of the collection to copy.
+   */
+  const copyCollection = async (collectionName) => {
+    if (!sourceDb || !targetDb) {
+      throw new Error("Firebase databases are not initialized.");
+    }
+
+    try {
+      // Get a reference to the source collection
+      const sourceCollectionRef = collection(sourceDb, collectionName);
+      // Fetch all documents from the source collection
+      const sourceDocsSnapshot = await getDocs(sourceCollectionRef);
+
+      // Prepare an array of promises for copying each document
+      const copyPromises = sourceDocsSnapshot.docs.map(async (sourceDoc) => {
+        // Get the document data and ID
+        const docData = sourceDoc.data();
+        const docId = sourceDoc.id;
+
+        // Get a reference to the target document with the same ID
+        const targetDocRef = doc(targetDb, collectionName, docId);
+        // Set (overwrite or create) the document in the target database
+        await setDoc(targetDocRef, docData);
+        console.log(`Copied document: ${collectionName}/${docId}`);
+      });
+
+      // Wait for all document copy operations to complete
+      await Promise.all(copyPromises);
+      return `Collection '${collectionName}' copied successfully.`;
+    } catch (error) {
+      console.error(`Error copying collection '${collectionName}':`, error);
+      throw new Error(`Failed to copy collection '${collectionName}': ${error.message}`);
+    }
+  };
+
+  /**
+   * Handles the main data copying process for all specified collections.
+   */
+  const handleCopyAllData = async () => {
+    setLoading(true);
+    setMessage('');
+
+    if (!isFirebaseReady) {
+      setMessage('Firebase is not ready. Please wait or check initialization.');
+      setLoading(false);
+      return;
+    }
+
+    // Split the comma-separated input into an array of collection names
+    const collectionsToCopy = collectionsInput.split(',').map(name => name.trim()).filter(name => name !== '');
+
+    if (collectionsToCopy.length === 0) {
+      setMessage('Please enter at least one collection name to copy.');
+      setLoading(false);
+      return;
+    }
+
+    let successMessages = [];
+    let errorMessages = [];
+
+    for (const collectionName of collectionsToCopy) {
+      try {
+        const result = await copyCollection(collectionName);
+        successMessages.push(result);
+      } catch (error) {
+        errorMessages.push(error.message);
+      }
+    }
+
+    setLoading(false);
+    if (errorMessages.length > 0) {
+      setMessage(`Copy completed with errors: ${errorMessages.join('; ')}. Successful: ${successMessages.join('; ')}`);
+    } else {
+      setMessage(`All specified collections copied successfully: ${successMessages.join('; ')}`);
+    }
+  };
+
+  return (
+    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 p-4 font-sans">
+      <div className="bg-white p-8 rounded-lg shadow-xl w-full max-w-md text-center">
+        <h1 className="text-3xl font-extrabold mb-6 text-gray-800">
+          <span className="text-blue-600">Firebase</span> Data Copier
+        </h1>
+
+        <p className="text-gray-600 mb-6">
+          Copy data from one Firebase project (Source) to another (Target).
+          <br />
+          <span className="font-semibold">Ensure your Firebase security rules allow anonymous read/write access for this tool to function.</span>
+        </p>
+
+        <div className="mb-6">
+          <label htmlFor="collections" className="block text-gray-700 text-sm font-bold mb-2">
+            Collections to Copy (comma-separated):
+          </label>
+          <input
+            type="text"
+            id="collections"
+            className="shadow appearance-none border rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200 ease-in-out"
+            value={collectionsInput}
+            onChange={(e) => setCollectionsInput(e.target.value)}
+            placeholder="e.g., users, products, orders"
+            disabled={loading}
+          />
+        </div>
+
+        <button
+          onClick={handleCopyAllData}
+          disabled={loading || !isFirebaseReady}
+          className={`w-full py-3 px-6 rounded-lg text-white font-bold text-lg transition duration-300 ease-in-out transform ${
+            loading || !isFirebaseReady
+              ? 'bg-gray-400 cursor-not-allowed'
+              : 'bg-blue-600 hover:bg-blue-700 hover:scale-105 active:scale-95'
+          } focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-75`}
+        >
+          {loading ? 'Copying Data...' : 'Start Copying'}
+        </button>
+
+        {message && (
+          <p className={`mt-6 text-lg font-medium ${message.includes('Error') ? 'text-red-600' : 'text-green-600'}`}>
+            {message}
+          </p>
+        )}
+      </div>
+    </div>
+  );
+};
+
+export default CopyDatabaseData;

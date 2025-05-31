@@ -23,6 +23,8 @@ import BobbingImage from "./Image";
 import Weather from "./Weather";
 import AdditionalPoints from "./AdditionalPoints";
 import UpdateFieldNames from "./UpdateFieldNames";
+import Whale from "./Whale";
+import ModifySched from "./ModifySched";
 
 import { FaChevronDown } from "react-icons/fa";
 import { MdOutlineLocalGroceryStore } from "react-icons/md";
@@ -72,7 +74,7 @@ function Main() {
           <Password
             isVisitorView={isVisitorView}
             setIsVisitorView={setIsVisitorView}
-            correctPassword="0000">
+            correctPassword="9999">
             <PointingSystemGraph isVisitorView={isVisitorView} />
           </Password>
         );
@@ -91,7 +93,7 @@ function Main() {
           <Password
             isVisitorView={isVisitorView}
             setIsVisitorView={setIsVisitorView}
-            correctPassword="2024">
+            correctPassword="2025">
             <Store isVisitorView={isVisitorView} />
           </Password>
         );
@@ -123,7 +125,7 @@ function Main() {
                 "linear-gradient(to top, rgba(0,0,0,1), rgba(0,0,0,0.05))",
             }}>
             <div className="text-white text-center mb-4 relative z-10">
-              <h1 className="font-bold text-8xl sm:text-8xl md:text-9xl lg:text-9xl">
+              <h1 className="font-bold text-7xl sm:text-8xl md:text-9xl lg:text-9xl">
                 <span className="text-yellow-400 font-bold">SeaQuest</span>
               </h1>
 
@@ -316,7 +318,9 @@ function Main() {
               </div>
             </div>
 
-            {/* <BobbingImage /> */}
+            {/* <Whale />
+            <CopyScheduleData/>
+            <ModifySched/> */}
           </div>
         );
     }
@@ -350,28 +354,3 @@ function Main() {
 
 export default Main;
 
-// "use client";
-
-// import React from "react";
-// import Visitors from "./Visitors";
-// import Tab from "./Tab";
-// import Primary from "./Primary"
-// import InitializeData from "./InitializeData"
-// import AttendanceChart from "./AttendanceChart"
-// import StudentOutTime from "./StudentOutTime"
-// import PointingSystemGraph from "./PointingSystemGraph"
-
-// function Main({ configurations, currentConfigIndex, setCurrentConfigIndex  }) {
-//   return (
-//     <div>
-//       <AttendanceChart/>
-// <Tab configurations={configurations} currentConfigIndex={currentConfigIndex}
-//   setCurrentConfigIndex={setCurrentConfigIndex}/>
-//       <StudentOutTime/>
-//       <PointingSystemGraph/>
-
-//     </div>
-//   );
-// }
-
-// export default Main;

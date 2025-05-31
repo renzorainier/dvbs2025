@@ -65,7 +65,7 @@ function Tab() {
       <Password
         isVisitorView={isVisitorView}
         setIsVisitorView={setIsVisitorView}
-        correctPassword="1212">
+        correctPassword="3333">
         <div className="flex  justify-center items-center overflow-auto">
           <div
             className="w-full rounded-lg mx-auto"
