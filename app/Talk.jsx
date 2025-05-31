@@ -16,7 +16,7 @@ const VoiceChatComponent = () => {
   const [micMuted, setMicMuted] = useState(true);
   const [joined, setJoined] = useState(false);
   const [loading, setLoading] = useState(true);
-  const [activeRemoteUids, setActiveRemoteUids] = useState(new Set());
+const [activeRemoteUids, setActiveRemoteUids] = useState(new Set());
   const [isRemoteUserSpeaking, setIsRemoteUserSpeaking] = useState(false);
   const [position, setPosition] = useState({ x: 0, y: 0 });
   const [startAnimation, setStartAnimation] = useState(false);
@@ -24,7 +24,7 @@ const VoiceChatComponent = () => {
   const [showEndCallUI, setShowEndCallUI] = useState(false);
   const [isOverEndCallArea, setIsOverEndCallArea] = useState(false);
   const [callEnded, setCallEnded] = useState(false);
-  // Removed: showDarkOverlay state variable, as it's now derived directly from micMuted
+  const [rippleCount, setRippleCount] = useState(3); // New state for ripple count
 
   const offset = useRef({ x: 0, y: 0 });
   const componentRef = useRef(null);
@@ -264,7 +264,7 @@ const VoiceChatComponent = () => {
       : e.clientX;
     const clientY = e.type.startsWith("touch")
       ? e.touches[0].clientY
-      : e.clientY;
+      : e.touches[0].clientY; // Fix for touch events
 
     initialClientPos.current = { x: clientX, y: clientY };
 
@@ -297,15 +297,23 @@ const VoiceChatComponent = () => {
       const endCallAreaCenterY = 60;
       const endCallAreaRadius = 40;
 
-      const draggableCenterX = newPosition.x + (componentRef.current?.offsetWidth || 0) / 2;
-      const draggableCenterY = newPosition.y + (componentRef.current?.offsetHeight || 0) / 2;
+      const draggableCenterX =
+        newPosition.x + (componentRef.current?.offsetWidth || 0) / 2;
+      const draggableCenterY =
+        newPosition.y + (componentRef.current?.offsetHeight || 0) / 2;
 
       const distance = Math.sqrt(
         Math.pow(draggableCenterX - endCallAreaCenterX, 2) +
-        Math.pow(draggableCenterY - endCallAreaCenterY, 2)
+          Math.pow(draggableCenterY - endCallAreaCenterY, 2)
       );
 
-      const collisionThreshold = endCallAreaRadius + Math.min((componentRef.current?.offsetWidth || 0), (componentRef.current?.offsetHeight || 0)) / 3;
+      const collisionThreshold =
+        endCallAreaRadius +
+        Math.min(
+          componentRef.current?.offsetWidth || 0,
+          componentRef.current?.offsetHeight || 0
+        ) /
+          3;
       setIsOverEndCallArea(distance < collisionThreshold);
 
       if (e.cancelable) {
@@ -378,19 +386,19 @@ const VoiceChatComponent = () => {
 
   const totalActiveUsers = activeRemoteUids.size + (joined ? 1 : 0);
 
-  const ACCENT_COLOR_HEX = '#7FCDFF';
-  const ACCENT_COLOR_RGB = '127, 205, 255';
-  const ACCENT_COLOR_HOVER_LIGHT = '#A0E0FF';
+  const ACCENT_COLOR_HEX = "#7FCDFF";
+  const ACCENT_COLOR_RGB = "127, 205, 255";
+  const ACCENT_COLOR_HOVER_LIGHT = "#A0E0FF";
 
   return (
     <>
       {/* Dark Overlay - Now controlled by !micMuted */}
-      {!micMuted && joined && ( // Only show if mic is NOT muted AND we are joined
-        <div
-          className="fixed inset-0 bg-black transition-opacity duration-300"
-          style={{ opacity: 0.6, zIndex: 45 }}
-        ></div>
-      )}
+      {!micMuted &&
+        joined && ( // Only show if mic is NOT muted AND we are joined
+          <div
+            className="fixed inset-0 bg-black transition-opacity duration-300"
+            style={{ opacity: 0.6, zIndex: 45 }}></div>
+        )}
 
       {/* End Call UI (the circular 'X' at the top) */}
       {showEndCallUI && (
@@ -401,12 +409,13 @@ const VoiceChatComponent = () => {
               ? "rgba(255, 0, 0, 0.9)"
               : "#5C636E",
             color: "#EEEEEE",
-            border: `2px solid ${isOverEndCallArea ? '#FF0000' : '#EEEEEE'}`,
+            border: `2px solid ${isOverEndCallArea ? "#FF0000" : "#EEEEEE"}`,
             opacity: isOverEndCallArea ? 1 : 0.8,
-            boxShadow: isOverEndCallArea ? '0 0 20px rgba(255, 0, 0, 0.7)' : '0 5px 15px -3px rgba(0,0,0,0.4)',
+            boxShadow: isOverEndCallArea
+              ? "0 0 20px rgba(255, 0, 0, 0.7)"
+              : "0 5px 15px -3px rgba(0,0,0,0.4)",
             zIndex: 51,
-          }}
-        >
+          }}>
           <FaXmark
             className={`w-12 h-12 transition-transform duration-200 ${
               isOverEndCallArea ? "scale-125 text-white" : ""
@@ -419,43 +428,80 @@ const VoiceChatComponent = () => {
       <div
         ref={componentRef}
         className={`fixed z-50 rounded-xl shadow-2xl transition-all duration-500 ease-out
-                   w-auto h-auto min-w-[120px]
-                   cursor-grab active:cursor-grabbing
-                   ${isRemoteUserSpeaking && micMuted ? "animate-pulse-remote-speaking" : ""} `}
+                        w-auto h-auto min-w-[120px]
+                        cursor-grab active:cursor-grabbing
+                        ${
+                          isRemoteUserSpeaking && micMuted
+                            ? "animate-pulse-remote-speaking"
+                            : ""
+                        } `}
         style={{
           left: position.x,
           top: position.y,
-          transition: startAnimation ? "left 0.7s ease-out, top 0.3s ease-out" : "none",
-          backgroundColor: '#393E46',
-          borderColor: '#EEEEEE',
-          borderWidth: '1px',
-          userSelect: 'none',
-          MozUserSelect: 'none',
-          WebkitUserSelect: 'none',
-          msUserSelect: 'none',
+          transition: startAnimation
+            ? "left 0.7s ease-out, top 0.3s ease-out"
+            : "none",
+          backgroundColor: "#393E46",
+          borderColor: "#EEEEEE",
+          borderWidth: "1px",
+          userSelect: "none",
+          MozUserSelect: "none",
+          WebkitUserSelect: "none",
+          msUserSelect: "none",
           display: callEnded && !isDragging ? "none" : "block",
           zIndex: 50,
         }}
         onMouseDown={handleStart}
-        onTouchStart={handleStart}
-      >
+        onTouchStart={handleStart}>
         <div className="absolute inset-0 z-0"></div>
 
-        <div className="relative flex flex-col p-4 z-10" style={{ color: '#EEEEEE' }}>
+        {/* New: Ripple elements */}
+        {!micMuted &&
+          joined &&
+          [...Array(rippleCount)].map((_, i) => (
+            <div
+              key={i}
+              className="absolute inset-0 rounded-full animate-full-screen-pulse"
+              style={{
+                backgroundColor: `rgba(${ACCENT_COLOR_RGB}, 0.7)`,
+                zIndex: -1, // Ensure it's behind the component
+                animationDelay: `${i * 0.4}s`, // Stagger the animation
+                transform: `scale(0)`, // Start small
+              }}
+            ></div>
+          ))}
+
+        <div
+          className="relative flex flex-col p-4 z-10"
+          style={{ color: "#EEEEEE" }}>
           <div className="flex flex-col items-center justify-center space-y-2">
             {loading ? (
               <>
-                <FaSpinner className="w-12 h-12 mb-2 animate-spin-slow" style={{ color: ACCENT_COLOR_HEX }} />
-                <p className="text-sm font-medium" style={{ color: '#EEEEEE' }}>Connecting...</p>
+                <FaSpinner
+                  className="w-12 h-12 mb-2 animate-spin-slow"
+                  style={{ color: ACCENT_COLOR_HEX }}
+                />
+                <p className="text-sm font-medium" style={{ color: "#EEEEEE" }}>
+                  Connecting...
+                </p>
               </>
             ) : (
               <>
-                <div className="flex items-center text-base font-semibold space-x-1" style={{ color: '#EEEEEE' }}>
-                  <FaUsers className="w-4 h-4" style={{ color: ACCENT_COLOR_HEX }} />
+                <div
+                  className="flex items-center text-base font-semibold space-x-1"
+                  style={{ color: "#EEEEEE" }}>
+                  <FaUsers
+                    className="w-4 h-4"
+                    style={{ color: ACCENT_COLOR_HEX }}
+                  />
                   <span>Users: {totalActiveUsers}</span>
                 </div>
 
-                <p className="text-sm text-center font-medium" style={{ color: '#EEEEEE' }}>Press to talk</p>
+                <p
+                  className="text-sm text-center font-medium"
+                  style={{ color: "#EEEEEE" }}>
+                  Press to talk
+                </p>
 
                 <button
                   onMouseDown={startTalking}
@@ -466,22 +512,29 @@ const VoiceChatComponent = () => {
                     ${!micMuted ? "animate-pulse-mic" : ""}
                   `}
                   style={{
-                    backgroundColor: micMuted ? '#5C636E' : ACCENT_COLOR_HEX,
+                    backgroundColor: micMuted ? "#5C636E" : ACCENT_COLOR_HEX,
                     boxShadow: micMuted
-                      ? '0 5px 15px -3px rgba(0, 0, 0, 0.4)'
+                      ? "0 5px 15px -3px rgba(0, 0, 0, 0.4)"
                       : `0 8px 20px -5px rgba(${ACCENT_COLOR_RGB}, 0.6)`,
-                    color: '#EEEEEE',
-                    cursor: 'pointer',
-                    border: '2px solid transparent',
+                    color: "#EEEEEE",
+                    cursor: "pointer",
+                    border: "2px solid transparent",
                   }}
                   aria-pressed={!micMuted}
-                  aria-label={micMuted ? "Hold to talk" : "Release to Stop Talking"}
-                  title={micMuted ? "Hold to Talk" : "Release to Stop Talking"}
-                >
+                  aria-label={
+                    micMuted ? "Hold to talk" : "Release to Stop Talking"
+                  }
+                  title={micMuted ? "Hold to Talk" : "Release to Stop Talking"}>
                   {micMuted ? (
-                    <FaMicrophoneSlash className="w-12 h-12 pointer-events-none select-none" style={{ color: '#EEEEEE' }} />
+                    <FaMicrophoneSlash
+                      className="w-12 h-12 pointer-events-none select-none"
+                      style={{ color: "#EEEEEE" }}
+                    />
                   ) : (
-                    <FaMicrophone className="w-12 h-12 pointer-events-none select-none" style={{ color: '#EEEEEE' }} />
+                    <FaMicrophone
+                      className="w-12 h-12 pointer-events-none select-none"
+                      style={{ color: "#EEEEEE" }}
+                    />
                   )}
                 </button>
               </>
@@ -500,10 +553,9 @@ const VoiceChatComponent = () => {
           style={{
             backgroundColor: ACCENT_COLOR_HEX,
             boxShadow: `0 8px 20px -5px rgba(${ACCENT_COLOR_RGB}, 0.6)`,
-            color: '#EEEEEE',
-            cursor: 'pointer',
-          }}
-        >
+            color: "#EEEEEE",
+            cursor: "pointer",
+          }}>
           <FaPhone className="w-10 h-10" />
         </button>
       )}
@@ -585,9 +637,26 @@ const VoiceChatComponent = () => {
           animation: ring-phone 2s ease-in-out infinite;
         }
 
+        /* New: Full-screen pulse animation */
+        @keyframes full-screen-pulse {
+          0% {
+            transform: scale(0);
+            opacity: 0.7;
+          }
+          100% {
+            transform: scale(9); /* Adjust this value to control how far it radiates */
+            opacity: 0;
+          }
+        }
+
+        .animate-full-screen-pulse {
+          animation: full-screen-pulse 2s cubic-bezier(0.25, 0.46, 0.45, 0.94) infinite;
+        }
+
         /* Direct CSS for button hover effects as they cannot be dynamically set in style prop directly for :hover pseudo-class */
         button {
-          transition: background-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+          transition: background-color 0.2s ease-in-out,
+            box-shadow 0.2s ease-in-out;
         }
 
         button[aria-pressed="false"]:hover {
