@@ -31,30 +31,40 @@ function Visitors({
   const [visitorName, setVisitorName] = useState("");
   const [showVisitorPrompt, setShowVisitorPrompt] = useState(false); // New state for visitor prompt
 
-  const predefinedRoutes = [
+ const predefinedRoutes = [
     "Antipolo Hills",
     "Banaba",
+    "Brgy. San Luis",
+    "Cottonwoods",
+    "Crestwood",
+    "Dambakan",
     "Famous",
     "Fatima",
+    "Forrestridge",
     "Insular",
     "Kaysipot",
     "LaSalle",
     "Mira Verde",
     "Monte Oro",
     "Oreta",
+    "Pagray",
+    "Patnubay",
+    "Pinugay Baras",
+    "Primrose",
     "Queenstown 1",
     "Queenstown 2",
+    "Radar",
     "Samba Homes",
     "Sampaga",
-    "Brgy. San Luis",
+    "San Isidro",
     "Santana",
     "Sarimanok",
     "Solid",
     "Sta. Elena",
     "TakTak Road",
     "Town and Country",
-
-  ];
+    "Tropical Palms"
+];
 
   const handleClick = () => {
     setBroughtBible(!broughtBible);
@@ -152,7 +162,7 @@ function Visitors({
       const newIndex = existingIndexes.length
         ? Math.max(...existingIndexes) + 1
         : 1;
-        const paddedIndex = String(newIndex).padStart(3, "0");
+      const paddedIndex = String(newIndex).padStart(3, "0");
 
       // const paddedIndex = String(newIndex).padStart(2, "0");
 
