@@ -25,6 +25,8 @@ import AdditionalPoints from "./AdditionalPoints";
 import UpdateFieldNames from "./UpdateFieldNames";
 import Whale from "./Whale";
 import ModifySched from "./ModifySched";
+import RecitationPoints from "./RecitationPoints";
+
 
 import { FaChevronDown } from "react-icons/fa";
 import { MdOutlineLocalGroceryStore } from "react-icons/md";
@@ -106,13 +108,13 @@ function Main() {
             <DisplayControl isVisitorView={isVisitorView} />
           </Password>
         );
-      case "AdditionalPoints":
+      case "RecitationPoints":
         return (
           <Password
             isVisitorView={isVisitorView}
             setIsVisitorView={setIsVisitorView}
-            correctPassword="2222">
-            <AdditionalPoints isVisitorView={isVisitorView} />
+            correctPassword="4444">
+            <RecitationPoints isVisitorView={isVisitorView} />
           </Password>
         );
 
@@ -296,7 +298,7 @@ function Main() {
                       </button>
                       <button
                         className="focus:outline-none bg-white-500 backdrop-blur-lg  text-white font-semibold py-4 px-4 rounded-lg shadow-lg transition duration-300 transform hover:scale-105"
-                        onClick={() => handleButtonClick("AdditionalPoints")}
+                        onClick={() => handleButtonClick("RecitationPoints")}
                         style={{
                           animation: "slide-from-left 1s ease forwards",
                         }}>
@@ -308,7 +310,7 @@ function Main() {
                           }}>
                           <IoIosAddCircle style={{ fontSize: "3.5em" }} />{" "}
                           <span style={{ marginTop: "0.5em" }}>
-                            Additional Points
+                            Recitation
                           </span>
                         </div>
                       </button>
