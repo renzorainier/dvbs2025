@@ -11,10 +11,49 @@ const firebaseConfig = {
   storageBucket: "dvbs2025-53fe4.firebasestorage.app",
   messagingSenderId: "947229774723",
   appId: "1:947229774723:web:9ca40961e7a98bc4239cb6"
+
+
 };
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 export const db = getFirestore(app);
+
+//orig
+  // apiKey: "AIzaSyCqWJLDMee6M4SexWRSPtSOxqCza7pqZ2U",
+  // authDomain: "dvbs2025-53fe4.firebaseapp.com",
+  // projectId: "dvbs2025-53fe4",
+  // storageBucket: "dvbs2025-53fe4.firebasestorage.app",
+  // messagingSenderId: "947229774723",
+  // appId: "1:947229774723:web:9ca40961e7a98bc4239cb6"
+
+
+
+
+//BACKUP 2 (tuesday)
+
+  // apiKey: "AIzaSyAf-Z2aOuTIn0499TBFjbR3TfFjR6AifnY",
+  // authDomain: "dvbs2025backup2.firebaseapp.com",
+  // projectId: "dvbs2025backup2",
+  // storageBucket: "dvbs2025backup2.firebasestorage.app",
+  // messagingSenderId: "971096956855",
+  // appId: "1:971096956855:web:2a5ee8b5872dc596199232"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

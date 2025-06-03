@@ -171,7 +171,7 @@ const StudentRanking = () => {
               <div className="flex flex-col justify-between">
                 {Object.keys(groupedStudents[currentGroup]).map(
                   (rank, index) =>
-                    parseInt(rank) <= 5 && (
+                    parseInt(rank) <= 10 && (
                       <motion.div
                         key={rank}
                         className="flex items-center p-4 bg-white rounded-lg shadow-md mb-4 last:mb-0"
