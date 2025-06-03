@@ -9,7 +9,7 @@ import {
   FaPhone,
 } from "react-icons/fa6";
 
-const RTC_APP_ID = "a1dd237f3234425fbbea62593bfbf9ad"; // Replace with your actual Agora RTC App ID
+const RTC_APP_ID = "d83eb8328dc441d4a539c602282cabd0"; // Replace with your actual Agora RTC App ID
 const DEFAULT_CHANNEL_NAME = "my-simple-voice-channel";
 
 const VoiceChatComponent = () => {
