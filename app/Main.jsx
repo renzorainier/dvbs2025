@@ -197,7 +197,7 @@ function Main() {
                         alignItems: "center",
                       }}>
                       <HiMiniUserGroup style={{ fontSize: "3.5em" }} />{" "}
-                      <span style={{ marginTop: "0.5em" }}>Points</span>
+                      <span style={{ marginTop: "0.5em" }}>Group Points</span>
                     </div>
                   </button>
 
