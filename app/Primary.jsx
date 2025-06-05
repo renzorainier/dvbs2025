@@ -223,7 +223,7 @@ useEffect(() => {
 
       // Update Parent status and points
       const currentPoints = primaryData[pointsField] || 0;
-      const newPoints = broughtParent ? currentPoints + 10 : currentPoints;
+      const newPoints = broughtParent ? currentPoints + 0 : currentPoints;
 
       await updateDoc(docRef, {
         [parentField]: broughtParent ? true : false,
@@ -548,12 +548,12 @@ useEffect(() => {
           </p>
         </div>
         {/* //untoggle on friday */}
-        {/* <div className="flex items-center bg-white border rounded-lg shadow-md p-4 ml-4">
+        <div className="flex items-center bg-white border rounded-lg shadow-md p-4 ml-4">
           <RiGroup2Fill style={{ fontSize: "1.5em" }} />
           <p className="text-gray-800 font-bold ml-2 text-lg sm:text-base md:text-lg lg:text-xl">
             {countStudentsWithParents()}
           </p>
-        </div> */}
+        </div>
       </div>
 
       <div className="w-full max-w-md text-gray-700 bg-white p-5 border rounded-lg shadow-lg mx-auto">
